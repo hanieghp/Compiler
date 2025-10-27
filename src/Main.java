@@ -109,7 +109,7 @@ public class Main {
             "interface Drawable {\n" +
             "    void draw();\n" +
             "    int getArea();\n" +
-            "}";
+            "}::";
 
         testSymbolTable(complexCode, "Complex Class with Interface");
 
