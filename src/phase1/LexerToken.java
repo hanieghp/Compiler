@@ -1,10 +1,12 @@
-public class Token {
+package phase1;
+
+public class LexerToken {
     private TokenType type;
     private String value;
     private int line;
     private int column;
 
-    public Token(TokenType type, String value, int line, int column) {
+    public LexerToken(TokenType type, String value, int line, int column) {
         this.type = type;
         this.value = value;
         this.line = line;

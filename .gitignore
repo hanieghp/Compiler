@@ -1,0 +1,38 @@
+# Compiled Java classes
+*.class
+build/
+
+# ANTLR generated files
+generated/
+
+# IDE files
+*.iml
+.idea/
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS generated files  
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Package files
+*.jar
+*.war
+*.ear
+!lib/*.jar
+
+# Local environment
+.env
+.env.local

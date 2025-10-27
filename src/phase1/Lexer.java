@@ -1,3 +1,5 @@
+package phase1;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +18,8 @@ public class Lexer {
         this.dfaBuilder = new DFABuilder();
     }
 
-    public List<Token> tokenize() {
-        List<Token> tokens = new ArrayList<>();
+    public List<LexerToken> tokenize() {
+        List<LexerToken> tokens = new ArrayList<>();
         
         while (pos < input.length()) {
             skipWhitespaceAndComments();
@@ -26,22 +28,22 @@ public class Lexer {
                 break;
             }
 
-            Token token = nextToken();
-            if (token != null) {
-                tokens.add(token);
+            LexerToken LexerToken = nextToken();
+            if (LexerToken != null) {
+                tokens.add(LexerToken);
             }
         }
 
-        tokens.add(new Token(TokenType.EOF, "", line, column));
+        tokens.add(new LexerToken(TokenType.EOF, "", line, column));
         return tokens;
     }
 
-    private Token nextToken() {
+    private LexerToken nextToken() {
         char current = peek();
         int startLine = line;
         int startColumn = column;
 
-        Token opToken = tryOperatorOrDelimiter();
+        LexerToken opToken = tryOperatorOrDelimiter();
         if (opToken != null) {
             return opToken;
         }
@@ -63,10 +65,10 @@ public class Lexer {
         }
 
         advance();
-        return new Token(TokenType.ERROR, String.valueOf(current), startLine, startColumn);
+        return new LexerToken(TokenType.ERROR, String.valueOf(current), startLine, startColumn);
     }
 
-    private Token tryOperatorOrDelimiter() {
+    private LexerToken tryOperatorOrDelimiter() {
         char c = peek();
         int startLine = line;
         int startColumn = column;
@@ -88,14 +90,14 @@ public class Lexer {
             if (type != null) {
                 advance();
                 advance();
-                return new Token(type, twoChar, startLine, startColumn);
+                return new LexerToken(type, twoChar, startLine, startColumn);
             }
         }
 
         if (pos + 6 < input.length() && input.substring(pos, pos + 7).equals(".length")) {
             String val = ".length";
             for (int i = 0; i < 7; i++) advance();
-            return new Token(TokenType.DOTLENGTH, val, startLine, startColumn);
+            return new LexerToken(TokenType.DOTLENGTH, val, startLine, startColumn);
         }
 
         TokenType type = null;
@@ -122,13 +124,13 @@ public class Lexer {
 
         if (type != null) {
             advance();
-            return new Token(type, String.valueOf(c), startLine, startColumn);
+            return new LexerToken(type, String.valueOf(c), startLine, startColumn);
         }
 
         return null;
     }
 
-    private Token scanIdentifier(int startLine, int startColumn) {
+    private LexerToken scanIdentifier(int startLine, int startColumn) {
         DFAState start = dfaBuilder.buildIdentifierDFA();
         StringBuilder sb = new StringBuilder();
         DFAState currentState = start;
@@ -156,13 +158,13 @@ public class Lexer {
         if (lastAcceptingState != null) {
             String value = sb.toString();
             TokenType type = dfaBuilder.getKeywordType(value);
-            return new Token(type, value, startLine, startColumn);
+            return new LexerToken(type, value, startLine, startColumn);
         }
 
-        return new Token(TokenType.ERROR, sb.toString(), startLine, startColumn);
+        return new LexerToken(TokenType.ERROR, sb.toString(), startLine, startColumn);
     }
 
-    private Token scanInteger(int startLine, int startColumn) {
+    private LexerToken scanInteger(int startLine, int startColumn) {
         DFAState start = dfaBuilder.buildIntegerDFA();
         StringBuilder sb = new StringBuilder();
         DFAState currentState = start;
@@ -189,13 +191,13 @@ public class Lexer {
 
         if (lastAcceptingState != null) {
             String value = sb.toString();
-            return new Token(TokenType.INTEGER_LITERAL, value, startLine, startColumn);
+            return new LexerToken(TokenType.INTEGER_LITERAL, value, startLine, startColumn);
         }
 
-        return new Token(TokenType.ERROR, sb.toString(), startLine, startColumn);
+        return new LexerToken(TokenType.ERROR, sb.toString(), startLine, startColumn);
     }
 
-    private Token scanString(int startLine, int startColumn) {
+    private LexerToken scanString(int startLine, int startColumn) {
         DFAState start = dfaBuilder.buildStringDFA();
         StringBuilder sb = new StringBuilder();
         DFAState currentState = start;
@@ -213,14 +215,14 @@ public class Lexer {
             currentState = nextState;
 
             if (currentState.isAccepting()) {
-                return new Token(TokenType.STRING_LITERAL, sb.toString(), startLine, startColumn);
+                return new LexerToken(TokenType.STRING_LITERAL, sb.toString(), startLine, startColumn);
             }
         }
 
-        return new Token(TokenType.ERROR, sb.toString(), startLine, startColumn);
+        return new LexerToken(TokenType.ERROR, sb.toString(), startLine, startColumn);
     }
 
-    private Token scanChar(int startLine, int startColumn) {
+    private LexerToken scanChar(int startLine, int startColumn) {
         DFAState start = dfaBuilder.buildCharDFA();
         StringBuilder sb = new StringBuilder();
         DFAState currentState = start;
@@ -238,11 +240,11 @@ public class Lexer {
             currentState = nextState;
 
             if (currentState.isAccepting()) {
-                return new Token(TokenType.CHAR_LITERAL, sb.toString(), startLine, startColumn);
+                return new LexerToken(TokenType.CHAR_LITERAL, sb.toString(), startLine, startColumn);
             }
         }
 
-        return new Token(TokenType.ERROR, sb.toString(), startLine, startColumn);
+        return new LexerToken(TokenType.ERROR, sb.toString(), startLine, startColumn);
     }
 
     private void skipWhitespaceAndComments() {

@@ -1,3 +1,5 @@
+package phase1;
+
 public enum TokenType {
     // Keywords
     ABSTRACT, BOOLEAN, BREAK, CHAR, CLASS, CONTINUE, ELSE, EXTENDS,
